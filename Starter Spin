@@ -1,0 +1,112 @@
+import random
+#these are just SOME skins, not all are included
+green = 'Green Drip', 'Red Drip','Orange Drip', 'Cerise','Danger','Porcelain','Graphite','Ducky','Snowy','Picasso','Picnic','Sandstorm','Dijon','Spruce','Olive','Sepia'
+blue = 'Green Poly', 'Exoscarlet','Sugar Kiss','Musk','Eco','Zig-Zag','Blue Poly','Red Poly','Yellow Poly','Green Splat','Orange Splat','Purple Splat','Red Splat','Blue Drip','Pink Drip','Orange Poly','Pink Poly','Red Digital','Purple Digital','Green Digital','Blue Digital'
+epic = 'Choc', 'Wiggle','Candy','Gilded','Soul','Auzora','Welded','Heat-Tint','Goop','Paint Spill','Bliss Flow','Ripped Sun','Fire Stream','Cracked','Fabrica','War Torn','Cascade','Boneclaw','Tesselate','Vapormoon','Purpur','Versate','AK Octo','Tortobe','Chartreuse','Cygento','Black Ice','Sky Rifle','Zebra Rifle','Tiger Rifle','Olympus Rifle','AR Wired','Blaze AK'
+
+list1 = [ "inventory contains : " , ]
+
+Starterroll = (
+        ("Green", 75, green),
+        ("Blue", 22, blue),
+        ('Epic', 3, epic) )
+        
+def roll_result():
+        '''
+        get the result of the chosen roll. returns tuple
+        description.
+        ''' 
+        roll = random.randrange(100)
+        for(rarity, percent, item) in Starterroll:
+                roll -= percent
+                if roll < 0:
+                        return (rarity, item)
+        assert False
+
+def roll_name(rarity):
+    "Return canonical result of a roll"
+    return rarity
+    
+
+    
+def roll():
+        "Roll a roll"
+        (rarity, item) = roll_result()
+        print("You got", end="")
+        if rarity == "Epic":
+                print(" an " + roll_name(rarity) + "!")
+                list1.append(random.choice(epic));
+                print("It's " + list1[-1]) 
+                return
+        elif rarity == "Blue":
+                print(" a " + roll_name(rarity) + "!")
+                list1.append(random.choice(blue));
+                print("It's " + list1[-1]) 
+                return
+        else:
+                print(" a " + roll_name(rarity) + "!")
+                list1.append(random.choice(green));
+                print("It's " + list1[-1]) 
+                return
+
+def test():
+    "Test the rolling algorithm."
+    counts = {}
+    for (rarity, _, _) in Starterroll:
+        counts[rarity] = 0
+    for i in range(10000):
+        (rarity, _) = roll_result()
+        counts[rarity] += 1
+    for rarity in counts:
+        print(roll_name(rarity) + ": " + str(counts[rarity]))
+
+def inventory():
+        'Shows current skins'
+        print(list1)
+        
+def quit():
+        "Quits the simulation"
+        inventory()
+        exit()
+
+
+def help():
+    "Show help."
+    print('''
+    roll: Rolls a starter roll
+    inventory: views current inventory
+    quit: quit the simulation
+    help: this menu
+    test(dev use): test rolling algorithm
+    ''')
+        
+        
+commands = { "roll" : (0, roll),
+             "inventory" : (0, inventory),
+             "quit" : (0, quit),
+             "help" : (0, help),
+             "test" : (0, test) }     
+#main loop
+print("Welcome to Krunker Rolling! You can type 'help' to show the help menu")
+while True:
+    words = []
+    while words == []:
+        try:
+            cmd = input("> ")
+        except EOFError:
+            print("quit")
+            cmd = "quit"
+        words = cmd.split()
+    if words[0] in commands:
+        (nargs, cmd_fun) = commands[words[0]]
+        if len(words) - 1 != nargs:
+            print("Wrong number of arguments to command. Please try again")
+            continue
+        if nargs == 0:
+            cmd_fun()
+        elif nargs == 1:
+            cmd_fun(words[1])
+        else:
+            assert False
+        continue
+    print("Unknown command. Please try again.")
